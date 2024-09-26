@@ -1,0 +1,12 @@
+flask
+pymongo
+pyjwt
+apify-client
+langchain-openai
+langchain
+langchain-community
+bs4
+html2text
+langchain-chroma
+llama-cpp-python
+tqdm
