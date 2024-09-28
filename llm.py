@@ -14,11 +14,13 @@ from langchain_community.document_transformers import (
     LongContextReorder,
 )
 
-# 現在の日付を取得し、指定された形式でフォーマット
+# Get the current date and format it in the specified format
 today = datetime.now()
 formatted_date = today.strftime("%Y%m%d")
+      
 
-# 抽出するURLの一覧を定義
+
+# Define the list of URLs to extract
 urls = [
     "https://www.pref.chiba.lg.jp/index.html",
     "https://www.pref.chiba.lg.jp/cate/kfk/index.html",
@@ -33,32 +35,32 @@ urls = [
     "https://tenki.jp/forecast/3/15/",
 ]
 
-# 環境変数からAPIキーを取得
+# Get the API key from the environment variable
 load_dotenv(override=True)
 OPENAI__API__KEY = os.environ.get("OEPNAI_API_KEY")
 
 
-# 文書の順序を変更するためのインスタンスを初期化
+# Initialize an instance to change the document order
 reordering = LongContextReorder()
 
-# SSL証明書の検証を無効にしてHTMLコンテンツを非同期でロード
+# Load HTML content asynchronously with SSL certificate validation disabled
 loader = AsyncHtmlLoader(urls, verify_ssl=False)
 
-# 指定されたURLからHTMLコンテンツをロード
+# Load HTML content from the specified URL
 txt = loader.load()
 
-# ロードされたHTMLコンテンツを平文に変換
+# Convert the loaded HTML content to plain text
 html2text = Html2TextTransformer()
 docs_transformed = html2text.transform_documents(txt)
 
-# 変換されたテキストを指定されたサイズのチンクに分割
+# Split the converted text into chunks of the specified size
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunked_text = text_splitter.split_documents(docs_transformed)
 
-# チンクされたテキストを文字列に結合
+# Join the tinged text into a string
 converted_chunked_text = [''.join(str(item) for item in tup) for tup in chunked_text]
 
-# チンクされたテキストに対してChromaとOpenAIを使用してエンビードマークを生成
+# Generate embossed marks using Chroma and OpenAI for tinkled text
 vectordb = Chroma.from_texts(
     converted_chunked_text,
     embedding=OpenAIEmbeddings(openai_api_key=OPENAI__API__KEY),
@@ -66,7 +68,7 @@ vectordb = Chroma.from_texts(
     persist_directory="chroma_db"
 )
 
-# 質問の文脈を整理するためのシステムプロンプトを定義
+# Define a system prompt to help contextualize your question
 contextualize_q_system_prompt = f"""
 今日の日付は{today.year}年{today.month}月{today.day}日です。
 千葉県に関する行政情報や旅行情報に詳しいアシスタントです。
@@ -74,10 +76,10 @@ contextualize_q_system_prompt = f"""
 簡潔で情報量のあるスタイルを保ち、読みやすいようにMarkdown形式で回答をフォーマットしてください。
 """
 
-# LLMモデルを初期化
+# Initialize the LLM model
 llm = ChatOpenAI(model_name="gpt-4o", openai_api_key=OPENAI__API__KEY, temperature=0.3)
 
-# 質問の文脈を整理するためのプロンプトテンプレートを作成
+# Create prompt templates to contextualize your questions
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", contextualize_q_system_prompt),
@@ -86,20 +88,21 @@ contextualize_q_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-# 質問の文脈を整理するためのチェーン操作を設定
+
+# Set up chaining operations to organize the question context
 contextualize_q_chain = contextualize_q_prompt | llm | StrOutputParser()
 
-# 質問の文脈を整理するための関数を定義
+# Define a function to organize the question context
 def contextualized_question(input: dict):
     if input.get("chat_history"):
         return contextualize_q_chain
     else:
         return input["question"]
 
-# ベクターストアを初期化
+# Initialize the vector store
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings(openai_api_key=OPENAI__API__KEY), collection_name="openai_collection")
 
-# リトリバーをセットアップ
+# Setup the retriever
 retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
 
 # ドキュメントの順序を再ランク付けする
