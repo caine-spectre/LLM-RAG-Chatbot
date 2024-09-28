@@ -40,8 +40,8 @@ load_dotenv(override=True)
 OPENAI__API__KEY = os.environ.get("OEPNAI_API_KEY")
 
 
-# Initialize an instance to change the document order
-reordering = LongContextReorder()
+# Initialize an instance to change the document order 
+reordering = LongContextReorder() 
 
 # Load HTML content asynchronously with SSL certificate validation disabled
 loader = AsyncHtmlLoader(urls, verify_ssl=False)

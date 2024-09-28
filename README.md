@@ -1,34 +1,36 @@
-# 千葉県案内チャットボットバックエンド
+## Chiba Guide Chatbot Backend
 
-## 概要
+## Overview
 
-本プロジェクトは、千葉県に関する行政情報、銘菓情報、旅行情報などをもとに、ユーザーの質問に最適な回答を生成するチャットボットアプリケーションのバックエンドです。
+  This project is a backend for a chatbot application that generates optimal answers to user questions based on administrative, confectionery, and travel information about Chiba Prefecture.
 
-## 必要なもの
+## Requirements
 
 - Python 3.12.3
 
-## セットアップ
+## Setup
 
-1. アプリケーションを実行します。<br />
-Pythonを実行するための仮想環境を構築します。下記のリンクを参考してください。<br />
+1. run the application. <br />
+Create a virtual environment to run Python. 
+Refer to the following link.
+ <br />
 https://qiita.com/futakuchi0117/items/6030458a96f62cb64d37<br />
 https://qiita.com/fiftystorm36/items/b2fd47cf32c7694adc2e
 
-2. 必要なPythonパッケージをインストールします。
+Install the required Python packages.
 ```
 pip install -r requirements.txt
 ```
 
-3. `.env` ファイルをプロジェクトのルートディレクトリに作成し、`SECRET_KEY`と`OPENAI_API_KEY` を設定します。
+3. create a `.env` file in the root directory of your project and set the `SECRET_KEY` and `OPENAI_API_KEY`.
 ```
-SECRET_KEY=あなたの秘密鍵
-OPENAI_API_KEY=あなたの秘密鍵
+SECRET_KEY= your private key
+OPENAI_API_KEY= your private key
 ```
 
-## 実行方法
+## How to execute.
 ```
 py app.py
-```
+````
 
-2. ブラウザを開き、`http://localhost:5000` にアクセスして、アプリケーションをテストします。
+Open a browser and go to ``http://localhost:5000`` to test your application.
