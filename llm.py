@@ -105,12 +105,11 @@ vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIE
 # Setup the retriever
 retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
 
-# ドキュメントの順序を再ランク付けする
+# Rerank the document order
 reordering.transform_documents(retriever)
 
 
-
-# 質問に答えるためのシステムプロンプトを定義
+# Define the system prompt to answer the question
 qa_system_prompt = f"""今日の日付が{today.year}年{today.month}月{today.day}日であることを覚えておいてください。"""
 qa_system_prompt = qa_system_prompt + """
 最後の質問に答えるために、以下のすべての文脈を文書で使用する。
@@ -121,7 +120,7 @@ qa_system_prompt = qa_system_prompt + """
 {context} 
 """
 
-# 質問に答えるためのプロンプトテンプレートを作成
+# Create a prompt template to answer the question
 qa_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", qa_system_prompt),
@@ -130,7 +129,7 @@ qa_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-# フォローアップの質問を生成するためのチェーン操作を設定
+# Set up chained operations to generate follow-up questions
 rag_chain = (
     RunnablePassthrough.assign(
         context=contextualized_question | retriever
@@ -140,7 +139,7 @@ rag_chain = (
     | StrOutputParser()
 )
 
-# フォローアップの質問を生成するためのプロンプトテンプレートを作成
+# Create a prompt template to generate follow-up questions
 follow_up_q_prompt = """
 ユーザーの質問に基づいて、千葉県に関連する適切なフォローアップ質問を2-4つ提案します。
 これらの質問を回答を提供せずに、ユーザーの興味に合わせてリスト形式で提示してください。重複や些細な質問を避けてください。
@@ -164,12 +163,12 @@ follow_up_prompt_template = ChatPromptTemplate.from_messages(
 
 follow_up_chain = follow_up_prompt_template | llm | StrOutputParser()
 
-# レスポンスを生成するための関数を定義
+# Define a function to generate a response
 def generate_response(question, chat_history=[]):
     for chunk in rag_chain.stream({'question': question, 'chat_history': chat_history}):
         yield chunk
 
-# フォローアップの質問を生成するための関数を定義
+# Define a function to generate follow-up questions
 def generate_follow_up_question(question, chat_history=[]):
     follow_up_questions = follow_up_chain.invoke({'question': question, 'chat_history': chat_history})
     return follow_up_questions
