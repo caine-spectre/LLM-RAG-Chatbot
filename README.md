@@ -2,7 +2,7 @@
 
 ## Overview
 
-  This project is a backend for a chatbot application that generates optimal answers to user questions based on administrative, confectionery, and travel information about Chiba Prefecture.
+  This project is LLM RAG Chatbot using Langchain. I used Pinecone for vectorDB, FastAPI for Backend. GPT-4o for OpenAI model, Langchain for LLM Integration.
 
 ## Requirements
 
