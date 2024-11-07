@@ -3,6 +3,7 @@
 ## Overview
 
   This project is LLM RAG Chatbot using Langchain. I used Pinecone for vectorDB, FastAPI for Backend. GPT-4o for OpenAI model, Langchain for LLM Integration.
+  Used Langgraph.
 
 ## Requirements
 
