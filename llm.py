@@ -76,6 +76,7 @@ contextualize_q_system_prompt = f"""
 簡潔で情報量のあるスタイルを保ち、読みやすいようにMarkdown形式で回答をフォーマットしてください。
 """
 
+
 # Initialize the LLM model
 llm = ChatOpenAI(model_name="gpt-4o", openai_api_key=OPENAI__API__KEY, temperature=0.3)
 
