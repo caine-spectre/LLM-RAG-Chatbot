@@ -22,7 +22,7 @@ users_collection = db['users']
 chat_history_collection = db['chat-history']
 
 # シークレットキーを環境変数から取得
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")  
 
 # ユーザー登録エンドポイント
 @app.route('/api/auth/signup', methods=['POST'])
